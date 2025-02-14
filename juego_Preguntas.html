@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Preguntas👾🎮 - Juan Esteban Arias</title>
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/1420/1420060.png">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: url('https://data.1freewallpapers.com/detail/code-text-programming-coding.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        #welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        #animation {
+            position: static;
+            right: 20px;
+            top: 40px;
+            width: 250px;
+            height: 250px;
+            background: url('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExbjlrd2l1bWN4MDR1amIxaDBmMXR0a2pzYzBwMG1ybjJ1ZWdjc3FsYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/78XCFBGOlS6keY1Bil/giphy.gif') no-repeat center;
+            background-size: contain;
+        }
+        #start-button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        #start-button:hover {
+            background-color: #218838;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        h1 {
+            animation: fadeIn 3s;
+            
+        }
+        #quiz-container {
+            display: none;
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            color: black;
+        }
+        button.correct { background-color: green; color: white; }
+        button.wrong { background-color: red; color: white; }
+    </style>
+</head>
+<body>
+    <div id="welcome-screen">
+        <h1>Bienvenido al Juego de Preguntas</h1>
+        <h2>👾🎮</h2>
+        <button id="start-button" onclick="startGame()">Comenzar</button>
+        <div id="animation"></div>
+    </div>
+    <div id="quiz-container">
+        <img id="question-image" src="" alt="Imagen de pregunta" width="300">
+        <h2 id="question">Pregunta aquí...</h2>
+        <div id="answers"></div>
+        <p id="score">Puntaje: 0</p>
+        <button id="restart-button" onclick="restartGame()" style="display:none; margin-top:20px; padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">Volver a jugar</button>
+    </div>
+    <script>
+        const questions = [
+        { question: "1. ¿Qué es un requisito funcional?", options: ["Una característica técnica", "Una función específica del software", "Un error del sistema"], answer: 1, image: "https://www.inesdi.com/sites/default/files/2022-05/tipos%20de%20software.jpg" },
+        { question: "2. ¿Qué es un requisito no funcional?", options: ["Una restricción de calidad", "Una función específica", "Una línea de código"], answer: 0, image: "https://www.kutub-download.com/wp-content/uploads/2015/05/12-Best-Programming-Languages-for-Web-App-Development.jpg" },
+        { question: "3. ¿Qué es un caso de uso?", options: ["Un diagrama", "Un modelo de datos", "Una descripción de interacción"], answer: 2, image: "https://www.webyempresas.com/wp-content/uploads/2022/01/diagrama-casos-de-uso-ejemplo-2.jpg" },
+        { question: "4. ¿Qué documento especifica los requisitos de software?", options: ["SRS", "UML", "DFD"], answer: 0, image: "https://future.com.mx/code/wp-content/uploads/2023/01/requerimientos-de-software.jpg" },
+        { question: "5. ¿Qué es un requisito de usabilidad?", options: ["Tiempo de respuesta", "Capacidad del sistema", "Número de usuarios"], answer: 0, image: "https://www.appstudio.ca/blog/wp-content/uploads/2020/09/Modern-Software-Development.jpg" },
+        { question: "6. ¿Qué significa la trazabilidad en requerimientos?", options: ["Seguimiento de cambios", "Pruebas unitarias", "Mantenimiento"], answer: 0, image: "https://i1.wp.com/midevocional.org/wp-content/uploads/2016/02/indeciso1.jpg?resize=1280%2C640" },
+        { question: "7. ¿Qué herramienta se usa para modelar requisitos?", options: ["Jira", "UML", "Eclipse"], answer: 1, image: "https://cdn-proxy.slickplan.com/wp-content/uploads/2023/10/10_uml.png" },
+        { question: "8. ¿Qué tipo de requisitos son tiempos de respuesta?", options: ["Funcionales", "No funcionales", "Operativos"], answer: 1, image: "https://www.livebeep.com/web/wp1/wp-content/uploads/2022/10/Diseno-sin-titulo-6.jpg" },
+        { question: "9. ¿Qué es la elicitación de requisitos?", options: ["Reunir requisitos", "Eliminar requisitos", "Codificar requisitos"], answer: 0, image: "https://arrisweb.b-cdn.net/wp-content/uploads/2023/06/74967-quantum-cryptography-and-encryption-how-it-works-quantum-cryptography-1024x536.jpg" },
+        { question: "10. ¿Qué es la validación de requisitos?", options: ["Confirmar exactitud", "Escribir código", "Eliminar requisitos"], answer: 0, image: "https://tramitesenlinea.org/wp-content/uploads/2021/05/word-image-145.png" },
+        { question: "11. ¿Qué es la trazabilidad de requisitos?", options: ["La capacidad de describir los requisitos en detalle", "La capacidad de seguir la vida de un requisito en ambas direcciones", "La capacidad de eliminar requisitos obsoletos"], answer: 1,},
+        { question: "12. ¿Qué es un requisito de seguridad?", options: ["Una función que permite al usuario cambiar su contraseña", "Una restricción que especifica cómo el sistema protege los datos contra accesos no autorizados", "Una característica que mejora la interfaz de usuario"], answer: 1,},
+        { question: "13. ¿Qué es un requisito de usabilidad?", options: ["Una medida de cuán fácil es para los usuarios utilizar el sistema", "Una especificación de rendimiento del sistema", "Una restricción de seguridad"], answer: 0,},
+        { question: "14. ¿Qué es un requisito de rendimiento?", options: ["Una especificación de la velocidad o capacidad del sistema", "Una descripción de la interfaz de usuario", "Una restricción legal"], answer: 0,},
+        { question: "15. ¿Qué es un requisito de interoperabilidad?", options: ["Una especificación de cómo el sistema interactúa con otros sistemas", "Una descripción de la arquitectura interna del sistema", "Una restricción de diseño"], answer: 0,},
+        { question: "16. ¿Qué es un requisito de disponibilidad?", options: ["Una especificación de cuándo el sistema debe estar operativo", "Una descripción de las funciones del sistema", "Una restricción de presupuesto"], answer: 0,},
+        { question: "17. ¿Qué es un requisito de mantenibilidad?", options: ["Una especificación de cómo se puede modificar el sistema después de su implementación", "Una descripción de las pruebas del sistema", "Una restricción de tiempo"], answer: 0,},
+        { question: "18. ¿Qué es un requisito de portabilidad?", options: ["Una especificación de cómo el sistema puede adaptarse a diferentes entornos", "Una descripción de la base de datos del sistema", "Una restricción de hardware"], answer: 0,},
+        { question: "19. ¿Qué es un requisito de confiabilidad?", options: ["Una especificación de la probabilidad de que el sistema funcione sin fallos durante un período determinado", "Una descripción de la interfaz gráfica del usuario", "Una restricción de costos"], answer: 0,},
+        { question: "20. ¿Qué es un requisito de escalabilidad?", options: ["Una especificación de la capacidad del sistema para manejar un aumento en la carga de trabajo", "Una descripción del lenguaje de programación utilizado", "Una restricción de licencia"], answer: 0,}
+
+    ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function startGame() {
+            document.getElementById("welcome-screen").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentQuestion >= questions.length) {
+                document.getElementById("quiz-container").innerHTML = `<h2>Juego terminado</h2><p>Tu puntaje final es: ${score}</p>`;
+                document.getElementById("restart-button").style.display = "block";
+                return;
+            }
+            const q = questions[currentQuestion];
+            document.getElementById("question").textContent = q.question;
+            document.getElementById("question-image").src = q.image;
+            const answersDiv = document.getElementById("answers");
+            answersDiv.innerHTML = "";
+            q.options.forEach((option, index) => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.onclick = () => checkAnswer(btn, index);
+                answersDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(button, selectedIndex) {
+            if (selectedIndex === questions[currentQuestion].answer) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+            }
+            setTimeout(() => {
+                currentQuestion++;
+                loadQuestion();
+                document.getElementById("score").textContent = `Puntaje: ${score}`;
+            }, 1000);
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            score = 0;
+            document.getElementById("quiz-container").innerHTML = `
+                <img id="question-image" src="" alt="Imagen de pregunta" width="300">
+                <h2 id="question">Pregunta aquí...</h2>
+                <div id="answers"></div>
+                <p id="score">Puntaje: 0</p>
+                <button id="restart-button" onclick="restartGame()" style="display:none; margin-top:20px; padding:10px 20px; background:#007bff; color:white; border:none; border-radius:5px;">Volver a jugar</button>
+            `;
+            startGame();
+        }
+    </script>
+</body>
+</html>
